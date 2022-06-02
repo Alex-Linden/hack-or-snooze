@@ -36,3 +36,12 @@ function updateNavOnLogin() {
   $navLogOut.show();
   $navUserProfile.text(`${currentUser.username}`).show();
 }
+
+
+function showSubmitNewStoryForm(evt) {
+  console.log("click");
+  evt.preventDefault();
+  $inputStory.show();
+}
+
+$navSubmit.on("click", showSubmitNewStoryForm);
