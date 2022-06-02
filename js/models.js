@@ -77,10 +77,10 @@ class StoryList {
   async addStory(currentUser, obj) {
     // UNIMPLEMENTED: complete this function!
     const token = currentUser.loginToken;
-    const response = await axios.post({
+    const response = await axios({
       url: `${BASE_URL}/stories`,
-      method: 'post',
-      story: { token, story: { obj } }
+      method: 'POST',
+      data: { "token": token, "story": obj }
     });
     /* let story = new Story ({
       username,
@@ -92,7 +92,9 @@ class StoryList {
       console.log(story); */
     console.log(response);
     /*return response; */
+    return new Story(response.data)
   }
+
 }
 
 /******************************************************************************
