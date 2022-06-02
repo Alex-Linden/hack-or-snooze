@@ -82,16 +82,7 @@ class StoryList {
       method: 'POST',
       data: { "token": token, "story": obj }
     });
-    /* let story = new Story ({
-      username,
-      createdAt,
-      storyId,
-      author,
-      title,
-      url});
-      console.log(story); */
     console.log(response);
-    /*return response; */
     return new Story(response.data)
   }
 

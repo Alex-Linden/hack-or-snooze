@@ -56,7 +56,6 @@ function putStoriesOnPage() {
  */
 async function getSubmittedStoryFromForm(evt) {
   evt.preventDefault();
-  //find may to clean up, map?
   const author = $('#author-input').val();
   const title = $("#title-input").val();
   const url = $("#story-url-input").val();
@@ -70,4 +69,4 @@ async function getSubmittedStoryFromForm(evt) {
   await getAndShowStoriesOnStart();
 }
 
-$('#story-btn').on('click', getSubmittedStoryFromForm);
+$('#input-story').on('submit', getSubmittedStoryFromForm);
