@@ -50,3 +50,24 @@ function putStoriesOnPage() {
 
   $allStoriesList.show();
 }
+/**grab the values from the input story form and use them to call
+ * the storylist.addstory method and then put that new story
+ * on the page
+ */
+async function getSubmittedStoryFromForm(evt) {
+  evt.preventDefault();
+  //find may to clean up, map?
+  const author = $('#author-input').val();
+  const title = $("#title-input").val();
+  const url = $("#story-url-input").val();
+  await storyList.addStory(currentUser, {
+    author,
+    title,
+    url
+  });
+  console.log('clicked');
+  $inputStory.hide();
+  await getAndShowStoriesOnStart();
+}
+
+$('#story-btn').on('click', getSubmittedStoryFromForm);
