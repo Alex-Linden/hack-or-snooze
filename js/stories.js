@@ -26,7 +26,7 @@ function generateStoryMarkup(story) {
 
   return $(`
       <li id="${story.storyId}" class="story">
-      <span class="star"><i id="starfavbtn" class="far fa-star"></i></span>
+      <span class="star">${changeStarColor(story)}</i></span>
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
         </a>

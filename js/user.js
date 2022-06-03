@@ -116,27 +116,49 @@ function updateUIOnUserLogin() {
   updateNavOnLogin();
 }
 
+
+
 async function updateUserFavoritesStories(evt) {
   // evt.preventDefault();
-  const currentStoryId = $(evt.target).closest(".story").attr("id")
+  const currentStoryId = $(evt.target).closest(".story").attr("id");
   console.log("updates favs");
   const favArr = [];
-  for (let i=0; i<currentUser.favorites.length; i++) {
+  for (let i = 0; i < currentUser.favorites.length; i++) {
     favArr.push(currentUser.favorites[i].storyId);
   }
   if (favArr.includes(currentStoryId)) {
-      await currentUser.removeFavorite(currentStoryId);
-    }
-  else{
-
-    await currentUser.addFavorite(currentStoryId);
+    await currentUser.removeFavorite(currentStoryId);
+    $(evt.target).closest('.star').empty().append(
+      '<i id="starfavbtn" class="far fa-star"></i>'
+    );
   }
-  checkForRememberedUser()
+  else {
+    await currentUser.addFavorite(currentStoryId);
+    $(evt.target).closest('.star').empty().append(
+      '<i id="starfavbtn" class="fas fa-star"></i>'
+    );
+  }
+  checkForRememberedUser();
   // putFavoriteStoriesOnPage();
   // currentUser = await User.loginViaStoredCredentials(token, username);
 }
 
 $allStoriesList.on("click", ".star", updateUserFavoritesStories);
+
+$favoriteList.on("click", ".star", updateUserFavoritesStories);
+
+function changeStarColor(story) {
+  const currentStoryId = story.storyId;
+  const favArr = [];
+  for (let i = 0; i < currentUser.favorites.length; i++) {
+    favArr.push(currentUser.favorites[i].storyId);
+  }
+  if (favArr.includes(currentStoryId)) {
+    return ('<i id="starfavbtn" class="fas fa-star"></i>');
+  } else {
+    return '<i id="starfavbtn" class="far fa-star"></i>';
+  }
+}
 
 // add function to button at star element
 // function will
