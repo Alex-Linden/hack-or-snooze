@@ -83,7 +83,7 @@ class StoryList {
       data: { "token": token, "story": obj }
     });
     console.log(response);
-    return new Story(response.data)
+    return new Story(response.data);
   }
 
 }
@@ -118,6 +118,31 @@ class User {
     this.loginToken = token;
   }
 
+
+  async addFavorite(story) {
+    const response = await axios({ url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: 'POST',
+      data: {
+        "token": this.loginToken,
+      }
+      });
+
+    console.log("add fav");
+    console.log(response.data);
+  }
+
+  async removeFavorite(story) {
+    const response = await axios({ url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+      method: 'DELETE',
+      data: {
+        "token": this.loginToken,
+      }
+      });
+
+    console.log("remove fav");
+    console.log(response.data);
+  }
+
   /** Register new user in API, make User instance & return it.
    *
    * - username: a new username
@@ -125,26 +150,27 @@ class User {
    * - name: the user's full name
    */
 
+
   static async signup(username, password, name) {
-    const response = await axios({
-      url: `${BASE_URL}/signup`,
-      method: "POST",
-      data: { user: { username, password, name } },
-    });
+  const response = await axios({
+    url: `${BASE_URL}/signup`,
+    method: "POST",
+    data: { user: { username, password, name } },
+  });
 
-    const { user } = response.data;
+  const { user } = response.data;
 
-    return new User(
-      {
-        username: user.username,
-        name: user.name,
-        createdAt: user.createdAt,
-        favorites: user.favorites,
-        ownStories: user.stories
-      },
-      response.data.token
-    );
-  }
+  return new User(
+    {
+      username: user.username,
+      name: user.name,
+      createdAt: user.createdAt,
+      favorites: user.favorites,
+      ownStories: user.stories
+    },
+    response.data.token
+  );
+}
 
   /** Login in user with API, make User instance & return it.
 
@@ -153,10 +179,36 @@ class User {
    */
 
   static async login(username, password) {
+  const response = await axios({
+    url: `${BASE_URL}/login`,
+    method: "POST",
+    data: { user: { username, password } },
+  });
+
+  const { user } = response.data;
+
+  return new User(
+    {
+      username: user.username,
+      name: user.name,
+      createdAt: user.createdAt,
+      favorites: user.favorites,
+      ownStories: user.stories
+    },
+    response.data.token
+  );
+}
+
+  /** When we already have credentials (token & username) for a user,
+   *   we can log them in automatically. This function does that.
+   */
+
+  static async loginViaStoredCredentials(token, username) {
+  try {
     const response = await axios({
-      url: `${BASE_URL}/login`,
-      method: "POST",
-      data: { user: { username, password } },
+      url: `${BASE_URL}/users/${username}`,
+      method: "GET",
+      params: { token },
     });
 
     const { user } = response.data;
@@ -169,37 +221,11 @@ class User {
         favorites: user.favorites,
         ownStories: user.stories
       },
-      response.data.token
+      token
     );
+  } catch (err) {
+    console.error("loginViaStoredCredentials failed", err);
+    return null;
   }
-
-  /** When we already have credentials (token & username) for a user,
-   *   we can log them in automatically. This function does that.
-   */
-
-  static async loginViaStoredCredentials(token, username) {
-    try {
-      const response = await axios({
-        url: `${BASE_URL}/users/${username}`,
-        method: "GET",
-        params: { token },
-      });
-
-      const { user } = response.data;
-
-      return new User(
-        {
-          username: user.username,
-          name: user.name,
-          createdAt: user.createdAt,
-          favorites: user.favorites,
-          ownStories: user.stories
-        },
-        token
-      );
-    } catch (err) {
-      console.error("loginViaStoredCredentials failed", err);
-      return null;
-    }
-  }
+}
 }
