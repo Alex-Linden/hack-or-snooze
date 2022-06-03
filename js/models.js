@@ -119,8 +119,8 @@ class User {
   }
 
 
-  async addFavorite(story) {
-    const response = await axios({ url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+  async addFavorite(storyId) {
+    const response = await axios({ url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
       method: 'POST',
       data: {
         "token": this.loginToken,
@@ -131,8 +131,8 @@ class User {
     console.log(response.data);
   }
 
-  async removeFavorite(story) {
-    const response = await axios({ url: `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
+  async removeFavorite(storyId) {
+    const response = await axios({ url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
       method: 'DELETE',
       data: {
         "token": this.loginToken,

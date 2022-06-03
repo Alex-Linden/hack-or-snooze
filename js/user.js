@@ -115,3 +115,31 @@ function updateUIOnUserLogin() {
 
   updateNavOnLogin();
 }
+
+async function updateUserFavoritesStories(evt) {
+  // evt.preventDefault();
+  const currentStoryId = $(evt.target).closest(".story").attr("id")
+  console.log("updates favs");
+  const favArr = [];
+  for (let i=0; i<currentUser.favorites.length; i++) {
+    favArr.push(currentUser.favorites[i].storyId);
+  }
+  if (favArr.includes(currentStoryId)) {
+      await currentUser.removeFavorite(currentStoryId);
+    }
+  else{
+
+    await currentUser.addFavorite(currentStoryId);
+  }
+  checkForRememberedUser()
+  // putFavoriteStoriesOnPage();
+  // currentUser = await User.loginViaStoredCredentials(token, username);
+}
+
+$allStoriesList.on("click", ".star", updateUserFavoritesStories);
+
+// add function to button at star element
+// function will
+// check if in user favs - remove & unshade star
+// else - add to user favorites & shade star
+//
