@@ -118,29 +118,41 @@ class User {
     this.loginToken = token;
   }
 
-
+  /**takes in a story Id, send a POST to the API server , adds that story to the
+   * users favorites property in the server
+   */
   async addFavorite(storyId) {
-    const response = await axios({ url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
+    const response = await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
       method: 'POST',
       data: {
         "token": this.loginToken,
       }
-      });
+    });
 
     console.log("add fav");
-    console.log(response.data);
+    console.log("response=", response.data);
+    const newFavs = response.data.user.favorites;
+    this.favorites = newFavs.map(s => new Story(s));
+    //look into updating user.favorites here
   }
 
+  /**takes in a story Id, send a POST to the API server , removes that story from the
+ * users favorites property in the server
+ */
   async removeFavorite(storyId) {
-    const response = await axios({ url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
+    const response = await axios({
+      url: `${BASE_URL}/users/${this.username}/favorites/${storyId}`,
       method: 'DELETE',
       data: {
         "token": this.loginToken,
       }
-      });
+    });
 
     console.log("remove fav");
     console.log(response.data);
+    const newFavs = response.data.user.favorites;
+    this.favorites = newFavs.map(s => new Story(s));
   }
 
   /** Register new user in API, make User instance & return it.
@@ -152,63 +164,10 @@ class User {
 
 
   static async signup(username, password, name) {
-  const response = await axios({
-    url: `${BASE_URL}/signup`,
-    method: "POST",
-    data: { user: { username, password, name } },
-  });
-
-  const { user } = response.data;
-
-  return new User(
-    {
-      username: user.username,
-      name: user.name,
-      createdAt: user.createdAt,
-      favorites: user.favorites,
-      ownStories: user.stories
-    },
-    response.data.token
-  );
-}
-
-  /** Login in user with API, make User instance & return it.
-
-   * - username: an existing user's username
-   * - password: an existing user's password
-   */
-
-  static async login(username, password) {
-  const response = await axios({
-    url: `${BASE_URL}/login`,
-    method: "POST",
-    data: { user: { username, password } },
-  });
-
-  const { user } = response.data;
-
-  return new User(
-    {
-      username: user.username,
-      name: user.name,
-      createdAt: user.createdAt,
-      favorites: user.favorites,
-      ownStories: user.stories
-    },
-    response.data.token
-  );
-}
-
-  /** When we already have credentials (token & username) for a user,
-   *   we can log them in automatically. This function does that.
-   */
-
-  static async loginViaStoredCredentials(token, username) {
-  try {
     const response = await axios({
-      url: `${BASE_URL}/users/${username}`,
-      method: "GET",
-      params: { token },
+      url: `${BASE_URL}/signup`,
+      method: "POST",
+      data: { user: { username, password, name } },
     });
 
     const { user } = response.data;
@@ -221,11 +180,64 @@ class User {
         favorites: user.favorites,
         ownStories: user.stories
       },
-      token
+      response.data.token
     );
-  } catch (err) {
-    console.error("loginViaStoredCredentials failed", err);
-    return null;
   }
-}
+
+  /** Login in user with API, make User instance & return it.
+
+   * - username: an existing user's username
+   * - password: an existing user's password
+   */
+
+  static async login(username, password) {
+    const response = await axios({
+      url: `${BASE_URL}/login`,
+      method: "POST",
+      data: { user: { username, password } },
+    });
+
+    const { user } = response.data;
+
+    return new User(
+      {
+        username: user.username,
+        name: user.name,
+        createdAt: user.createdAt,
+        favorites: user.favorites,
+        ownStories: user.stories
+      },
+      response.data.token
+    );
+  }
+
+  /** When we already have credentials (token & username) for a user,
+   *   we can log them in automatically. This function does that.
+   */
+
+  static async loginViaStoredCredentials(token, username) {
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/users/${username}`,
+        method: "GET",
+        params: { token },
+      });
+
+      const { user } = response.data;
+
+      return new User(
+        {
+          username: user.username,
+          name: user.name,
+          createdAt: user.createdAt,
+          favorites: user.favorites,
+          ownStories: user.stories
+        },
+        token
+      );
+    } catch (err) {
+      console.error("loginViaStoredCredentials failed", err);
+      return null;
+    }
+  }
 }

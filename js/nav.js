@@ -39,6 +39,7 @@ function updateNavOnLogin() {
   $navLeft.show();
 }
 
+/** When called displays submit story form */
 
 function showSubmitNewStoryForm(evt) {
   console.log("click");
@@ -47,6 +48,8 @@ function showSubmitNewStoryForm(evt) {
 }
 
 $navSubmit.on("click", showSubmitNewStoryForm);
+
+/** when called hides all stories list and shows favorite stories list */
 
 function showFavorites(evt) {
   evt.preventDefault();

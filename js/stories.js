@@ -74,6 +74,10 @@ async function getSubmittedStoryFromForm(evt) {
 
 $('#input-story').on('submit', getSubmittedStoryFromForm);
 
+/** when called looks at the favorites property in the current user
+ * and generates the html for the page
+ */
+
 function putFavoriteStoriesOnPage() {
   console.debug("putFavoriteStoriesOnPage");
 
@@ -87,3 +91,56 @@ function putFavoriteStoriesOnPage() {
   }
 
 }
+/** creates an array of favorite stories from the currentuser properties */
+
+function getFavStoryIds() {
+  const favArr = [];
+  for (let i = 0; i < currentUser.favorites.length; i++) {
+    favArr.push(currentUser.favorites[i].storyId);
+  }
+  return favArr;
+}
+
+/** looks at the event target storyID and updates the currentUser's
+ * favorites property. adjusts the color of the star element to reflect
+ * change
+ */
+
+async function updateUserFavoritesStories(evt) {
+  evt.preventDefault();
+  const currentStoryId = $(evt.target).closest(".story").attr("id");
+  console.log("updates favs");
+  const favArr = getFavStoryIds();
+  if (favArr.includes(currentStoryId)) {
+    await currentUser.removeFavorite(currentStoryId);
+    $(evt.target).closest('.star').empty().append(
+      '<i id="starfavbtn" class="far fa-star"></i>'
+    );
+  }
+  else {
+    await currentUser.addFavorite(currentStoryId);
+    $(evt.target).closest('.star').empty().append(
+      '<i id="starfavbtn" class="fas fa-star"></i>'
+    );
+  }
+}
+
+$allStoriesList.on("click", ".star", updateUserFavoritesStories);
+
+$favoriteList.on("click", ".star", updateUserFavoritesStories);
+
+/** takes in a story, generates the currentUser's favorite stories and creates
+ * a solid star if the current story is included in the the favorites, or a star
+ * outline if the story is not included in favorites.
+ */
+
+function changeStarColor(story) {
+  const currentStoryId = story.storyId;
+  const favArr = getFavStoryIds();
+  if (favArr.includes(currentStoryId)) {
+    return ('<i id="starfavbtn" class="fas fa-star"></i>');
+  } else {
+    return '<i id="starfavbtn" class="far fa-star"></i>';
+  }
+}
+
