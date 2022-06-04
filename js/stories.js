@@ -62,14 +62,15 @@ async function getSubmittedStoryFromForm(evt) {
   const author = $('#author-input').val();
   const title = $("#title-input").val();
   const url = $("#story-url-input").val();
-  await storyList.addStory(currentUser, {
+  const newStory = await storyList.addStory(currentUser, {
     author,
     title,
     url
   });
   console.log('clicked');
   $inputStory.hide();
-  await getAndShowStoriesOnStart();
+  const $newStory = generateStoryMarkup(newStory)
+  $allStoriesList.prepend($newStory);
 }
 
 $('#input-story').on('submit', getSubmittedStoryFromForm);
@@ -100,6 +101,8 @@ function getFavStoryIds() {
   }
   return favArr;
 }
+// map or filter, some
+// if(currentUser.favorites.some(story))
 
 /** looks at the event target storyID and updates the currentUser's
  * favorites property. adjusts the color of the star element to reflect
@@ -124,6 +127,7 @@ async function updateUserFavoritesStories(evt) {
     );
   }
 }
+//toggle class
 
 $allStoriesList.on("click", ".star", updateUserFavoritesStories);
 
@@ -143,4 +147,3 @@ function changeStarColor(story) {
     return '<i id="starfavbtn" class="far fa-star"></i>';
   }
 }
-
